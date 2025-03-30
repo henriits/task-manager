@@ -267,8 +267,14 @@ const Dashboard = () => {
             borderRadius: 2,
             padding: 3,
             backgroundColor: "#fff",
+
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            flexGrow: 1,
+            overflow: "hidden",
             maxHeight: 300,
-            overflow: "auto",
+
             mb: 3,
           }}
         >
