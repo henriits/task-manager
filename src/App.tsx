@@ -17,7 +17,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { Delete, Info, Edit } from "@mui/icons-material";
+import { Delete, Info, Edit, ChevronRight } from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -190,10 +190,10 @@ const Dashboard = () => {
           onChange={(e) => setFilter(e.target.value)}
           sx={{ my: 2 }}
         >
+          <MenuItem value="All">All</MenuItem>
           <MenuItem value="Today">Today</MenuItem>
           <MenuItem value="Upcoming">Upcoming</MenuItem>
           <MenuItem value="Later">Later</MenuItem>
-          <MenuItem value="All">All</MenuItem>
           <MenuItem value="Completed">Completed</MenuItem>
           <MenuItem value="Not Completed">Not Completed</MenuItem>
           <MenuItem value="Overdue">Overdue</MenuItem>
@@ -291,11 +291,23 @@ const Dashboard = () => {
             ))}
           </List>
         </Box>
-        <Box my={3}>
-          <Typography variant="h6">Today's Tasks</Typography>
+        <Box
+          sx={{
+            boxShadow: 3, // Modern shadow effect
+            borderRadius: 2, // Rounded corners for the container
+            padding: 3, // Padding around the content
+            backgroundColor: "#121212", // Darker background for the container (dark mode look)
+            mb: 3, // Margin-bottom to space out from other content
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2, color: "#fff" }}>
+            Today's Tasks
+          </Typography>
           {taskList.filter((task) => task.dueDate.startsWith(today)).length ===
           0 ? (
-            <Typography>No tasks left for today.</Typography> // Display this message if no tasks are due today
+            <Typography color="textSecondary">
+              No tasks left for today.
+            </Typography> // Light gray text for no tasks
           ) : (
             taskList
               .filter((task) => task.dueDate.startsWith(today))
@@ -303,17 +315,32 @@ const Dashboard = () => {
               .map((task) => (
                 <Box
                   key={task.id}
-                  p={2}
-                  bgcolor="yellow"
-                  borderRadius={2}
-                  my={1}
+                  sx={{
+                    p: 2,
+                    bgcolor: "#e0f7fa", // Light Teal background for each task (modern, calm color)
+                    borderRadius: 1,
+                    mb: 1,
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    boxShadow: 1, // Subtle shadow for each task
+                  }}
                 >
-                  <Typography>
+                  <Typography variant="body1" sx={{ color: "#333" }}>
                     {task.title} ({new Date(task.dueDate).toLocaleTimeString()})
                   </Typography>
-                  <Button size="small" onClick={() => setTaskDetails(task)}>
-                    Toggle Details
-                  </Button>
+                  <IconButton
+                    onClick={() => setTaskDetails(task)}
+                    sx={{
+                      backgroundColor: "#2196f3", // Modern blue color for the button
+                      color: "#fff", // White icon
+                      "&:hover": {
+                        backgroundColor: "#1976d2", // Darker blue on hover
+                      },
+                    }}
+                  >
+                    <ChevronRight /> {/* A simple Chevron icon */}
+                  </IconButton>
                 </Box>
               ))
           )}
