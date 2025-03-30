@@ -60,7 +60,8 @@ const App = () => {
   const completedTasks = taskList.filter(
     (task) => task.status === "Completed"
   ).length;
-  const progress = (completedTasks / taskList.length) * 100;
+  const totalTasks = taskList.length;
+  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
   return (
     <Box display="flex">
@@ -95,12 +96,12 @@ const App = () => {
         {selectedPage === "Home" && (
           <Box>
             <Typography variant="h6">
-              Total Tasks Left: {taskList.length - completedTasks}
+              Tasks Completed: {completedTasks} / {totalTasks}
             </Typography>
             <LinearProgress
               variant="determinate"
               value={progress}
-              sx={{ my: 2 }}
+              sx={{ my: 2, height: 10, borderRadius: 5 }}
             />
             <Button
               variant="contained"
