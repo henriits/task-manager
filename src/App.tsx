@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Checkbox,
   Button,
@@ -32,32 +32,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const tasks = [
-  {
-    id: 1,
-    title: "Task 1",
-    status: "Pending",
-    dueDate: "2025-03-30T10:00",
-    details: "Complete the first module.",
-  },
-  {
-    id: 2,
-    title: "Task 2",
-    status: "In Progress",
-    dueDate: "2025-03-30T14:00",
-    details: "Work on project report.",
-  },
-  {
-    id: 3,
-    title: "Task 3",
-    status: "Completed",
-    dueDate: "2025-03-31T09:00",
-    details: "Submit assignment.",
-  },
-];
-
 const Dashboard = () => {
-  const [taskList, setTaskList] = useState(tasks);
+  const [taskList, setTaskList] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
   const [newDetails, setNewDetails] = useState("");
@@ -69,6 +45,21 @@ const Dashboard = () => {
   const [editingTask, setEditingTask] = useState<EditTask | null>(null);
 
   const today = new Date().toISOString().split("T")[0];
+
+  // Load tasks from local storage on component mount
+  useEffect(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      setTaskList(JSON.parse(savedTasks));
+    }
+  }, []);
+
+  // Save tasks to local storage whenever taskList changes
+  useEffect(() => {
+    if (taskList.length > 0) {
+      localStorage.setItem("tasks", JSON.stringify(taskList));
+    }
+  }, [taskList]);
 
   const filteredTasks = taskList
     .filter((task) => {
@@ -115,16 +106,14 @@ const Dashboard = () => {
 
   const addTask = () => {
     if (newTask && newDueDate) {
-      setTaskList([
-        ...taskList,
-        {
-          id: Date.now(),
-          title: newTask,
-          status: "Pending",
-          dueDate: newDueDate,
-          details: newDetails || "No details for this task.",
-        },
-      ]);
+      const newTaskObj: Task = {
+        id: Date.now(),
+        title: newTask,
+        status: "Pending",
+        dueDate: newDueDate,
+        details: newDetails || "No details for this task.",
+      };
+      setTaskList([...taskList, newTaskObj]);
       setNewTask("");
       setNewDueDate("");
       setNewDetails("");
@@ -141,7 +130,11 @@ const Dashboard = () => {
   }
 
   const removeTask = (id: number): void => {
-    setTaskList(taskList.filter((task: Task) => task.id !== id));
+    const updatedTaskList = taskList.filter((task: Task) => task.id !== id);
+
+    setTaskList(updatedTaskList);
+
+    localStorage.setItem("tasks", JSON.stringify(updatedTaskList));
   };
 
   interface EditTask {
@@ -520,7 +513,7 @@ const Dashboard = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddTaskDialog(false)} color="primary">
+          <Button onClick={() => setOpenAddTaskDialog(false)} color="secondary">
             Cancel
           </Button>
           <Button onClick={addTask} color="primary">
@@ -558,7 +551,10 @@ const Dashboard = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenEditTaskDialog(false)} color="primary">
+          <Button
+            onClick={() => setOpenEditTaskDialog(false)}
+            color="secondary"
+          >
             Cancel
           </Button>
           <Button onClick={editTask} color="primary">
@@ -568,12 +564,23 @@ const Dashboard = () => {
       </Dialog>
 
       <Dialog open={!!taskDetails} onClose={() => setTaskDetails(null)}>
-        <DialogTitle>Task Details</DialogTitle>
+        <DialogTitle>{taskDetails?.title}</DialogTitle>
         <DialogContent>
-          <Typography>{taskDetails?.details}</Typography>
+          <Typography variant="body2">
+            <strong>Status:</strong> {taskDetails?.status}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Due Date:</strong>{" "}
+            {new Date(taskDetails?.dueDate || "").toLocaleString()}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Details:</strong> {taskDetails?.details}
+          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setTaskDetails(null)}>Close</Button>
+          <Button onClick={() => setTaskDetails(null)} color="primary">
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
