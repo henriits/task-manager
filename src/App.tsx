@@ -62,7 +62,13 @@ const Dashboard = () => {
   const [filter, setFilter] = useState("Today");
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
   const [openEditTaskDialog, setOpenEditTaskDialog] = useState(false); // State for the edit dialog
-  const [editingTask, setEditingTask] = useState<any>(null); // State for the task being edited
+  const [editingTask, setEditingTask] = useState<{
+    id: number;
+    title: string;
+    status: string;
+    dueDate: string;
+    details: string;
+  } | null>(null); // State for the task being edited
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -71,6 +77,38 @@ const Dashboard = () => {
       if (filter === "Today") return task.dueDate.startsWith(today);
       if (filter === "Upcoming") return task.dueDate > today;
       if (filter === "Later") return task.dueDate > today + 7;
+      if (filter === "All") return true;
+      if (filter === "Completed") return task.status === "Completed";
+      if (filter === "Not Completed") return task.status !== "Completed";
+      if (filter === "Overdue") return task.dueDate < today;
+      if (filter === "Due Today") return task.dueDate.startsWith(today);
+      if (filter === "Due Tomorrow") {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowDate = tomorrow.toISOString().split("T")[0];
+        return task.dueDate.startsWith(tomorrowDate);
+      }
+      if (filter === "Due This Week") {
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        const endOfWeek = new Date();
+        endOfWeek.setDate(endOfWeek.getDate() + 6);
+        const startOfWeekDate = startOfWeek.toISOString().split("T")[0];
+        const endOfWeekDate = endOfWeek.toISOString().split("T")[0];
+        return task.dueDate >= startOfWeekDate && task.dueDate <= endOfWeekDate;
+      }
+      if (filter === "Due Next Week") {
+        const startOfNextWeek = new Date();
+        startOfNextWeek.setDate(startOfNextWeek.getDate() + 7);
+        const endOfNextWeek = new Date();
+        endOfNextWeek.setDate(endOfNextWeek.getDate() + 13);
+        const startOfNextWeekDate = startOfNextWeek.toISOString().split("T")[0];
+        const endOfNextWeekDate = endOfNextWeek.toISOString().split("T")[0];
+        return (
+          task.dueDate >= startOfNextWeekDate &&
+          task.dueDate <= endOfNextWeekDate
+        );
+      }
       return true;
     })
     .filter((task) =>
@@ -100,7 +138,13 @@ const Dashboard = () => {
     setTaskList(taskList.filter((task) => task.id !== id));
   };
 
-  const openEditDialog = (task: any) => {
+  const openEditDialog = (task: {
+    id: number;
+    title: string;
+    status: string;
+    dueDate: string;
+    details: string;
+  }) => {
     setEditingTask(task);
     setNewTask(task.title);
     setNewDueDate(task.dueDate);
@@ -111,7 +155,7 @@ const Dashboard = () => {
   const editTask = () => {
     setTaskList(
       taskList.map((task) =>
-        task.id === editingTask.id
+        editingTask && task.id === editingTask.id
           ? {
               ...task,
               title: newTask,
@@ -150,6 +194,14 @@ const Dashboard = () => {
           <MenuItem value="Today">Today</MenuItem>
           <MenuItem value="Upcoming">Upcoming</MenuItem>
           <MenuItem value="Later">Later</MenuItem>
+          <MenuItem value="All">All</MenuItem>
+          <MenuItem value="Completed">Completed</MenuItem>
+          <MenuItem value="Not Completed">Not Completed</MenuItem>
+          <MenuItem value="Overdue">Overdue</MenuItem>
+          <MenuItem value="Due Today">Due Today</MenuItem>
+          <MenuItem value="Due Tomorrow">Due Tomorrow</MenuItem>
+          <MenuItem value="Due This Week">Due This Week</MenuItem>
+          <MenuItem value="Due Next Week">Due Next Week</MenuItem>
         </Select>
 
         <LinearProgress
