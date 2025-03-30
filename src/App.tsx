@@ -1,10 +1,5 @@
 import { useState } from "react";
 import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Checkbox,
   Button,
   Typography,
@@ -12,41 +7,70 @@ import {
   LinearProgress,
   TextField,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  Select,
 } from "@mui/material";
-import {
-  Home,
-  CheckCircle,
-  Event,
-  Settings,
-  Delete,
-} from "@mui/icons-material";
+import { Delete, Info } from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
 
 const tasks = [
-  { id: 1, title: "Task 1", status: "Pending", dueDate: "2025-03-30" },
-  { id: 2, title: "Task 2", status: "In Progress", dueDate: "2025-03-30" },
-  { id: 3, title: "Task 3", status: "Completed", dueDate: "2025-03-31" },
+  {
+    id: 1,
+    title: "Task 1",
+    status: "Pending",
+    dueDate: "2025-03-30T10:00",
+    details: "Complete the first module.",
+  },
+  {
+    id: 2,
+    title: "Task 2",
+    status: "In Progress",
+    dueDate: "2025-03-30T14:00",
+    details: "Work on project report.",
+  },
+  {
+    id: 3,
+    title: "Task 3",
+    status: "Completed",
+    dueDate: "2025-03-31T09:00",
+    details: "Submit assignment.",
+  },
 ];
 
-const App = () => {
-  const [selectedPage, setSelectedPage] = useState("Home");
+const Dashboard = () => {
   const [taskList, setTaskList] = useState(tasks);
   const [newTask, setNewTask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
+  const [taskDetails, setTaskDetails] = useState<{
+    id: number;
+    title: string;
+    status: string;
+    dueDate: string;
+    details: string;
+  } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState("Today");
+  const today = new Date().toISOString().split("T")[0];
 
-  const toggleTaskStatus = (id: number) => {
-    setTaskList(
-      taskList.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status: task.status === "Completed" ? "Pending" : "Completed",
-            }
-          : task
-      )
+  const filteredTasks = taskList
+    .filter((task) => {
+      if (filter === "Today") return task.dueDate.startsWith(today);
+      if (filter === "Upcoming") return task.dueDate > today;
+      if (filter === "Later") return task.dueDate > today + 7;
+      return true;
+    })
+    .filter((task) =>
+      task.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  };
 
   const addTask = () => {
     if (newTask && newDueDate) {
@@ -57,6 +81,7 @@ const App = () => {
           title: newTask,
           status: "Pending",
           dueDate: newDueDate,
+          details: "No details available.",
         },
       ]);
       setNewTask("");
@@ -68,96 +93,81 @@ const App = () => {
     setTaskList(taskList.filter((task) => task.id !== id));
   };
 
-  const completedTasks = taskList.filter(
-    (task) => task.status === "Completed"
-  ).length;
-  const totalTasks = taskList.length;
-  const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-
   return (
-    <Box display="flex">
-      <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0 }}>
-        <List>
-          {["Home", "My Tasks", "Calendar", "Settings"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <Button
-                fullWidth
-                onClick={() => setSelectedPage(text)}
-                sx={{
-                  justifyContent: "flex-start",
-                  backgroundColor:
-                    selectedPage === text
-                      ? "rgba(0, 0, 0, 0.08)"
-                      : "transparent",
-                }}
-              >
-                <ListItemIcon>
-                  {[<Home />, <CheckCircle />, <Event />, <Settings />][index]}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </Button>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
+    <Box display="flex" p={3}>
+      <Box flex={2} mr={2}>
+        <Typography variant="h4">Dashboard</Typography>
+        <TextField
+          fullWidth
+          placeholder="Search task..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{ my: 2 }}
+        />
 
-      <Box p={3} flex={1}>
-        <Typography variant="h4">{selectedPage}</Typography>
+        <Typography variant="h6">My Tasks</Typography>
+        <Select
+          fullWidth
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          sx={{ my: 2 }}
+        >
+          <MenuItem value="Today">Today</MenuItem>
+          <MenuItem value="Upcoming">Upcoming</MenuItem>
+          <MenuItem value="Later">Later</MenuItem>
+        </Select>
 
-        {selectedPage === "Home" && (
-          <Box>
-            <Typography variant="h6">
-              Tasks Completed: {completedTasks} / {totalTasks}
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              sx={{ my: 2, height: 10, borderRadius: 5 }}
-            />
-            <Button
-              variant="contained"
-              onClick={() => setSelectedPage("Calendar")}
-            >
-              Go to Calendar
-            </Button>
-          </Box>
-        )}
+        <LinearProgress
+          variant="determinate"
+          value={
+            (taskList.filter((t) => t.status === "Completed").length /
+              taskList.length) *
+            100
+          }
+          sx={{ my: 2, height: 10, borderRadius: 5 }}
+        />
 
-        {selectedPage === "My Tasks" && (
-          <Box>
-            <Box display="flex" gap={2} my={2}>
-              <TextField
-                label="Task Title"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-              />
-              <TextField
-                label="Due Date"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                value={newDueDate}
-                onChange={(e) => setNewDueDate(e.target.value)}
-              />
-              <Button variant="contained" onClick={addTask}>
-                Add Task
-              </Button>
-            </Box>
-            {taskList.map((task) => (
+        <Box maxHeight={300} overflow="auto">
+          <List>
+            {filteredTasks.map((task) => (
               <ListItem
                 key={task.id}
                 secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => removeTask(task.id)}
-                  >
-                    <Delete />
-                  </IconButton>
+                  <>
+                    <IconButton
+                      edge="end"
+                      aria-label="info"
+                      onClick={() => setTaskDetails(task)}
+                    >
+                      <Info />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => removeTask(task.id)}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </>
                 }
               >
                 <Checkbox
                   checked={task.status === "Completed"}
-                  onChange={() => toggleTaskStatus(task.id)}
+                  onChange={() =>
+                    setTaskList(
+                      taskList.map((t) =>
+                        t.id === task.id
+                          ? {
+                              ...t,
+                              status:
+                                t.status === "Completed"
+                                  ? "Pending"
+                                  : "Completed",
+                            }
+                          : t
+                      )
+                    )
+                  }
                 />
                 <ListItemText
                   primary={task.title}
@@ -165,22 +175,68 @@ const App = () => {
                 />
               </ListItem>
             ))}
-          </Box>
-        )}
-
-        {selectedPage === "Calendar" && (
-          <FullCalendar
-            plugins={[dayGridPlugin]}
-            initialView="dayGridMonth"
-            events={taskList.map((task) => ({
-              title: task.title,
-              date: task.dueDate,
-            }))}
-          />
-        )}
+          </List>
+        </Box>
+        <Box my={3}>
+          <Typography variant="h6">Today's Tasks</Typography>
+          {taskList
+            .filter((task) => task.dueDate.startsWith(today))
+            .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+            .map((task) => (
+              <Box key={task.id} p={2} bgcolor="yellow" borderRadius={2} my={1}>
+                <Typography>
+                  {task.title} ({new Date(task.dueDate).toLocaleTimeString()})
+                </Typography>
+                <Button size="small" onClick={() => setTaskDetails(task)}>
+                  Toggle Details
+                </Button>
+              </Box>
+            ))}
+        </Box>
       </Box>
+
+      <Box flex={3}>
+        <Typography variant="h5">Calendar</Typography>
+        <Button variant="contained" onClick={addTask} sx={{ my: 2 }}>
+          Add Task
+        </Button>
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin]}
+          initialView="timeGridWeek"
+          height="auto"
+          events={taskList.map((task) => ({
+            title: `${task.status === "Completed" ? "✔ " : ""}${task.title}`,
+            date: task.dueDate,
+            backgroundColor:
+              task.status === "Completed" ? "#4caf50" : "#2196f3",
+            textColor: "#fff",
+            extendedProps: { details: task.details },
+          }))}
+          eventClick={(info) =>
+            setTaskDetails(
+              info.event.extendedProps as {
+                id: number;
+                title: string;
+                status: string;
+                dueDate: string;
+                details: string;
+              }
+            )
+          }
+        />
+      </Box>
+
+      <Dialog open={!!taskDetails} onClose={() => setTaskDetails(null)}>
+        <DialogTitle>Task Details</DialogTitle>
+        <DialogContent>
+          <Typography>{taskDetails?.details}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTaskDetails(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default App;
+export default Dashboard;
