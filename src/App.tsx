@@ -325,7 +325,20 @@ const Dashboard = () => {
                   />
                   <ListItemText
                     primary={task.title}
-                    secondary={`Due: ${task.dueDate}`}
+                    secondary={`Due: ${new Date(task.dueDate).toLocaleString(
+                      "en-US",
+                      {
+                        month: "2-digit",
+                        day: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )}`}
+                    sx={{
+                      textDecoration:
+                        task.status === "Completed" ? "line-through" : "none",
+                    }}
                   />
                 </ListItem>
               ))}
