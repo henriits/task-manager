@@ -59,6 +59,7 @@ const Dashboard = () => {
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Today");
+  const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
   const today = new Date().toISOString().split("T")[0];
 
   const filteredTasks = taskList
@@ -86,6 +87,7 @@ const Dashboard = () => {
       ]);
       setNewTask("");
       setNewDueDate("");
+      setOpenAddTaskDialog(false); // Close dialog after adding task
     }
   };
 
@@ -197,7 +199,11 @@ const Dashboard = () => {
 
       <Box flex={3}>
         <Typography variant="h5">Calendar</Typography>
-        <Button variant="contained" onClick={addTask} sx={{ my: 2 }}>
+        <Button
+          variant="contained"
+          onClick={() => setOpenAddTaskDialog(true)} // Open Add Task Dialog
+          sx={{ my: 2 }}
+        >
           Add Task
         </Button>
         <FullCalendar
@@ -225,6 +231,37 @@ const Dashboard = () => {
           }
         />
       </Box>
+
+      <Dialog
+        open={openAddTaskDialog}
+        onClose={() => setOpenAddTaskDialog(false)}
+      >
+        <DialogTitle>Add New Task</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Task Title"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            sx={{ my: 2 }}
+          />
+          <TextField
+            fullWidth
+            type="datetime-local"
+            value={newDueDate}
+            onChange={(e) => setNewDueDate(e.target.value)}
+            sx={{ my: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAddTaskDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={addTask} color="primary">
+            Add Task
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog open={!!taskDetails} onClose={() => setTaskDetails(null)}>
         <DialogTitle>Task Details</DialogTitle>
