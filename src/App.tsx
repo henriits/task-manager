@@ -17,7 +17,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { Delete, Info, Edit, ChevronRight } from "@mui/icons-material";
+import { Delete, Info, Edit, ChevronRight, Add } from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -50,25 +50,13 @@ const Dashboard = () => {
   const [taskList, setTaskList] = useState(tasks);
   const [newTask, setNewTask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
-  const [newDetails, setNewDetails] = useState(""); // State for additional details
-  const [taskDetails, setTaskDetails] = useState<{
-    id: number;
-    title: string;
-    status: string;
-    dueDate: string;
-    details: string;
-  } | null>(null);
+  const [newDetails, setNewDetails] = useState("");
+  const [taskDetails, setTaskDetails] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Today");
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
-  const [openEditTaskDialog, setOpenEditTaskDialog] = useState(false); // State for the edit dialog
-  const [editingTask, setEditingTask] = useState<{
-    id: number;
-    title: string;
-    status: string;
-    dueDate: string;
-    details: string;
-  } | null>(null); // State for the task being edited
+  const [openEditTaskDialog, setOpenEditTaskDialog] = useState(false);
+  const [editingTask, setEditingTask] = useState<EditTask | null>(null);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -124,27 +112,36 @@ const Dashboard = () => {
           title: newTask,
           status: "Pending",
           dueDate: newDueDate,
-          details: newDetails || "No details for this task.", // Default if no details
+          details: newDetails || "No details for this task.",
         },
       ]);
       setNewTask("");
       setNewDueDate("");
-      setNewDetails(""); // Reset the details input
-      setOpenAddTaskDialog(false); // Close dialog after adding task
+      setNewDetails("");
+      setOpenAddTaskDialog(false);
     }
   };
 
-  const removeTask = (id: number) => {
-    setTaskList(taskList.filter((task) => task.id !== id));
-  };
-
-  const openEditDialog = (task: {
+  interface Task {
     id: number;
     title: string;
     status: string;
     dueDate: string;
     details: string;
-  }) => {
+  }
+
+  const removeTask = (id: number): void => {
+    setTaskList(taskList.filter((task: Task) => task.id !== id));
+  };
+
+  interface EditTask {
+    id: number;
+    title: string;
+    dueDate: string;
+    details: string;
+  }
+
+  const openEditDialog = (task: EditTask): void => {
     setEditingTask(task);
     setNewTask(task.title);
     setNewDueDate(task.dueDate);
@@ -166,8 +163,8 @@ const Dashboard = () => {
       )
     );
     setOpenEditTaskDialog(false);
-    setEditingTask(null); // Reset editing task
-    setNewTask(""); // Reset fields
+    setEditingTask(null);
+    setNewTask("");
     setNewDueDate("");
     setNewDetails("");
   };
@@ -175,43 +172,73 @@ const Dashboard = () => {
   return (
     <Box display="flex" p={3}>
       <Box flex={2} mr={2}>
-        <Typography variant="h4">Dashboard</Typography>
-        <TextField
-          fullWidth
-          placeholder="Search task..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{ my: 2 }}
-        />
-        <Typography variant="h6">My Tasks</Typography>
-        <Select
-          fullWidth
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          sx={{ my: 2 }}
-        >
-          <MenuItem value="All">All</MenuItem>
-          <MenuItem value="Today">Today</MenuItem>
-          <MenuItem value="Upcoming">Upcoming</MenuItem>
-          <MenuItem value="Later">Later</MenuItem>
-          <MenuItem value="Completed">Completed</MenuItem>
-          <MenuItem value="Not Completed">Not Completed</MenuItem>
-          <MenuItem value="Overdue">Overdue</MenuItem>
-          <MenuItem value="Due Today">Due Today</MenuItem>
-          <MenuItem value="Due Tomorrow">Due Tomorrow</MenuItem>
-          <MenuItem value="Due This Week">Due This Week</MenuItem>
-          <MenuItem value="Due Next Week">Due Next Week</MenuItem>
-        </Select>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxShadow: 3, // Modern shadow
-            borderRadius: 2, // Rounded corners
-            padding: 2, // Padding for spacing
-            backgroundColor: "#fff", // Background color
-            mb: 3, // Margin-bottom to separate from other content
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 3,
+            backgroundColor: "#fff",
+            mb: 3,
+          }}
+        >
+          <Typography variant="h4">Dashboard</Typography>
+          <TextField
+            fullWidth
+            placeholder="Search task..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ my: 2 }}
+          />
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            My Tasks
+            <IconButton
+              onClick={() => setOpenAddTaskDialog(true)}
+              sx={{ ml: 2 }}
+            >
+              <Add />
+            </IconButton>
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 3,
+            backgroundColor: "#fff",
+            mb: 3,
+          }}
+        >
+          <Select
+            fullWidth
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            sx={{ my: 2 }}
+          >
+            <MenuItem value="All">All</MenuItem>
+            <MenuItem value="Today">Today</MenuItem>
+            <MenuItem value="Upcoming">Upcoming</MenuItem>
+            <MenuItem value="Later">Later</MenuItem>
+            <MenuItem value="Completed">Completed</MenuItem>
+            <MenuItem value="Not Completed">Not Completed</MenuItem>
+            <MenuItem value="Overdue">Overdue</MenuItem>
+            <MenuItem value="Due Today">Due Today</MenuItem>
+            <MenuItem value="Due Tomorrow">Due Tomorrow</MenuItem>
+            <MenuItem value="Due This Week">Due This Week</MenuItem>
+            <MenuItem value="Due Next Week">Due Next Week</MenuItem>
+          </Select>
+        </Box>
+
+        <Box
+          sx={{
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 3,
+            backgroundColor: "#fff",
+            mb: 3,
           }}
         >
           <Typography variant="body2" color="textSecondary">
@@ -230,11 +257,21 @@ const Dashboard = () => {
                 taskList.length) *
               100
             }
-            sx={{ width: "80%", height: 10, borderRadius: 5 }}
+            sx={{ width: "100%", height: 10, borderRadius: 5 }}
           />
         </Box>
 
-        <Box maxHeight={300} overflow="auto">
+        <Box
+          sx={{
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 3,
+            backgroundColor: "#fff",
+            maxHeight: 300,
+            overflow: "auto",
+            mb: 3,
+          }}
+        >
           <List>
             {filteredTasks.map((task) => (
               <ListItem
@@ -291,13 +328,14 @@ const Dashboard = () => {
             ))}
           </List>
         </Box>
+
         <Box
           sx={{
-            boxShadow: 3, // Modern shadow effect
-            borderRadius: 2, // Rounded corners for the container
-            padding: 3, // Padding around the content
-            backgroundColor: "#121212", // Darker background for the container (dark mode look)
-            mb: 3, // Margin-bottom to space out from other content
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 3,
+            backgroundColor: "#121212",
+            mb: 3,
           }}
         >
           <Typography variant="h6" sx={{ mb: 2, color: "#fff" }}>
@@ -307,7 +345,7 @@ const Dashboard = () => {
           0 ? (
             <Typography color="textSecondary">
               No tasks left for today.
-            </Typography> // Light gray text for no tasks
+            </Typography>
           ) : (
             taskList
               .filter((task) => task.dueDate.startsWith(today))
@@ -317,13 +355,13 @@ const Dashboard = () => {
                   key={task.id}
                   sx={{
                     p: 2,
-                    bgcolor: "#e0f7fa", // Light Teal background for each task (modern, calm color)
+                    bgcolor: "#e0f7fa",
                     borderRadius: 1,
                     mb: 1,
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    boxShadow: 1, // Subtle shadow for each task
+                    boxShadow: 1,
                   }}
                 >
                   <Typography variant="body1" sx={{ color: "#333" }}>
@@ -332,14 +370,14 @@ const Dashboard = () => {
                   <IconButton
                     onClick={() => setTaskDetails(task)}
                     sx={{
-                      backgroundColor: "#2196f3", // Modern blue color for the button
-                      color: "#fff", // White icon
+                      backgroundColor: "#2196f3",
+                      color: "#fff",
                       "&:hover": {
-                        backgroundColor: "#1976d2", // Darker blue on hover
+                        backgroundColor: "#1976d2",
                       },
                     }}
                   >
-                    <ChevronRight /> {/* A simple Chevron icon */}
+                    <ChevronRight />
                   </IconButton>
                 </Box>
               ))
@@ -347,15 +385,20 @@ const Dashboard = () => {
         </Box>
       </Box>
 
-      <Box flex={3}>
-        <Typography variant="h5">Calendar</Typography>
-        <Button
-          variant="contained"
-          onClick={() => setOpenAddTaskDialog(true)} // Open Add Task Dialog
-          sx={{ my: 2 }}
-        >
-          Add Task
-        </Button>
+      <Box
+        flex={3}
+        sx={{
+          boxShadow: 3,
+          borderRadius: 2,
+          padding: 3,
+          backgroundColor: "#fff",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          Calendar
+        </Typography>
+
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView="timeGridWeek"
@@ -369,20 +412,11 @@ const Dashboard = () => {
             extendedProps: { details: task.details },
           }))}
           eventClick={(info) =>
-            setTaskDetails(
-              info.event.extendedProps as {
-                id: number;
-                title: string;
-                status: string;
-                dueDate: string;
-                details: string;
-              }
-            )
+            setTaskDetails(info.event.extendedProps as Task)
           }
         />
       </Box>
 
-      {/* Add Task Dialog */}
       <Dialog
         open={openAddTaskDialog}
         onClose={() => setOpenAddTaskDialog(false)}
@@ -421,7 +455,6 @@ const Dashboard = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Edit Task Dialog */}
       <Dialog
         open={openEditTaskDialog}
         onClose={() => setOpenEditTaskDialog(false)}
@@ -460,7 +493,6 @@ const Dashboard = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Task Details Dialog */}
       <Dialog open={!!taskDetails} onClose={() => setTaskDetails(null)}>
         <DialogTitle>Task Details</DialogTitle>
         <DialogContent>
