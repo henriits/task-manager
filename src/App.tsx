@@ -183,7 +183,6 @@ const Dashboard = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{ my: 2 }}
         />
-
         <Typography variant="h6">My Tasks</Typography>
         <Select
           fullWidth
@@ -203,16 +202,37 @@ const Dashboard = () => {
           <MenuItem value="Due This Week">Due This Week</MenuItem>
           <MenuItem value="Due Next Week">Due Next Week</MenuItem>
         </Select>
-
-        <LinearProgress
-          variant="determinate"
-          value={
-            (taskList.filter((t) => t.status === "Completed").length /
-              taskList.length) *
-            100
-          }
-          sx={{ my: 2, height: 10, borderRadius: 5 }}
-        />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            boxShadow: 3, // Modern shadow
+            borderRadius: 2, // Rounded corners
+            padding: 2, // Padding for spacing
+            backgroundColor: "#fff", // Background color
+            mb: 3, // Margin-bottom to separate from other content
+          }}
+        >
+          <Typography variant="body2" color="textSecondary">
+            Progress:{" "}
+            {(
+              (taskList.filter((t) => t.status === "Completed").length /
+                taskList.length) *
+              100
+            ).toFixed(0)}
+            %
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={
+              (taskList.filter((t) => t.status === "Completed").length /
+                taskList.length) *
+              100
+            }
+            sx={{ width: "80%", height: 10, borderRadius: 5 }}
+          />
+        </Box>
 
         <Box maxHeight={300} overflow="auto">
           <List>
