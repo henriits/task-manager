@@ -21,6 +21,16 @@ import { Delete, Info, Edit, ChevronRight, Add } from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 const tasks = [
   {
@@ -168,6 +178,25 @@ const Dashboard = () => {
     setNewDueDate("");
     setNewDetails("");
   };
+
+  const taskAdditionData = taskList.reduce(
+    (acc: Record<string, number>, task) => {
+      const date = task.dueDate.split("T")[0];
+
+      if (!acc[date]) {
+        acc[date] = 0;
+      }
+      acc[date] += 1;
+
+      return acc;
+    },
+    {}
+  );
+
+  const chartData = Object.keys(taskAdditionData).map((date) => ({
+    name: date,
+    count: taskAdditionData[date],
+  }));
 
   return (
     <Box display="flex" p={3}>
@@ -399,6 +428,34 @@ const Dashboard = () => {
                 </Box>
               ))
           )}
+        </Box>
+        <Box
+          sx={{
+            boxShadow: 3,
+            borderRadius: 2,
+            padding: 3,
+            backgroundColor: "#fff",
+            mb: 3,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Tasks Added Per Day
+          </Typography>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="count"
+                stroke="#8884d8"
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </Box>
       </Box>
 
