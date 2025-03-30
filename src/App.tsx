@@ -11,8 +11,15 @@ import {
   Box,
   LinearProgress,
   TextField,
+  IconButton,
 } from "@mui/material";
-import { Home, CheckCircle, Event, Settings } from "@mui/icons-material";
+import {
+  Home,
+  CheckCircle,
+  Event,
+  Settings,
+  Delete,
+} from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 
@@ -55,6 +62,10 @@ const App = () => {
       setNewTask("");
       setNewDueDate("");
     }
+  };
+
+  const removeTask = (id: number) => {
+    setTaskList(taskList.filter((task) => task.id !== id));
   };
 
   const completedTasks = taskList.filter(
@@ -132,7 +143,18 @@ const App = () => {
               </Button>
             </Box>
             {taskList.map((task) => (
-              <ListItem key={task.id}>
+              <ListItem
+                key={task.id}
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => removeTask(task.id)}
+                  >
+                    <Delete />
+                  </IconButton>
+                }
+              >
                 <Checkbox
                   checked={task.status === "Completed"}
                   onChange={() => toggleTaskStatus(task.id)}
