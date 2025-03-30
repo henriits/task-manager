@@ -10,6 +10,7 @@ import {
   Typography,
   Box,
   LinearProgress,
+  TextField,
 } from "@mui/material";
 import { Home, CheckCircle, Event, Settings } from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
@@ -24,6 +25,8 @@ const tasks = [
 const App = () => {
   const [selectedPage, setSelectedPage] = useState("Home");
   const [taskList, setTaskList] = useState(tasks);
+  const [newTask, setNewTask] = useState("");
+  const [newDueDate, setNewDueDate] = useState("");
 
   const toggleTaskStatus = (id: number) => {
     setTaskList(
@@ -36,6 +39,22 @@ const App = () => {
           : task
       )
     );
+  };
+
+  const addTask = () => {
+    if (newTask && newDueDate) {
+      setTaskList([
+        ...taskList,
+        {
+          id: Date.now(),
+          title: newTask,
+          status: "Pending",
+          dueDate: newDueDate,
+        },
+      ]);
+      setNewTask("");
+      setNewDueDate("");
+    }
   };
 
   const completedTasks = taskList.filter(
@@ -94,6 +113,23 @@ const App = () => {
 
         {selectedPage === "My Tasks" && (
           <Box>
+            <Box display="flex" gap={2} my={2}>
+              <TextField
+                label="Task Title"
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+              />
+              <TextField
+                label="Due Date"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                value={newDueDate}
+                onChange={(e) => setNewDueDate(e.target.value)}
+              />
+              <Button variant="contained" onClick={addTask}>
+                Add Task
+              </Button>
+            </Box>
             {taskList.map((task) => (
               <ListItem key={task.id}>
                 <Checkbox
