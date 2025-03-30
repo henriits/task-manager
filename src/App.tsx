@@ -17,7 +17,7 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { Delete, Info } from "@mui/icons-material";
+import { Delete, Info, Edit } from "@mui/icons-material";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -61,6 +61,9 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Today");
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
+  const [openEditTaskDialog, setOpenEditTaskDialog] = useState(false); // State for the edit dialog
+  const [editingTask, setEditingTask] = useState<any>(null); // State for the task being edited
+
   const today = new Date().toISOString().split("T")[0];
 
   const filteredTasks = taskList
@@ -95,6 +98,34 @@ const Dashboard = () => {
 
   const removeTask = (id: number) => {
     setTaskList(taskList.filter((task) => task.id !== id));
+  };
+
+  const openEditDialog = (task: any) => {
+    setEditingTask(task);
+    setNewTask(task.title);
+    setNewDueDate(task.dueDate);
+    setNewDetails(task.details);
+    setOpenEditTaskDialog(true);
+  };
+
+  const editTask = () => {
+    setTaskList(
+      taskList.map((task) =>
+        task.id === editingTask.id
+          ? {
+              ...task,
+              title: newTask,
+              dueDate: newDueDate,
+              details: newDetails,
+            }
+          : task
+      )
+    );
+    setOpenEditTaskDialog(false);
+    setEditingTask(null); // Reset editing task
+    setNewTask(""); // Reset fields
+    setNewDueDate("");
+    setNewDetails("");
   };
 
   return (
@@ -144,6 +175,13 @@ const Dashboard = () => {
                       onClick={() => setTaskDetails(task)}
                     >
                       <Info />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="edit"
+                      onClick={() => openEditDialog(task)}
+                    >
+                      <Edit />
                     </IconButton>
                     <IconButton
                       edge="end"
@@ -245,6 +283,7 @@ const Dashboard = () => {
         />
       </Box>
 
+      {/* Add Task Dialog */}
       <Dialog
         open={openAddTaskDialog}
         onClose={() => setOpenAddTaskDialog(false)}
@@ -283,6 +322,46 @@ const Dashboard = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Edit Task Dialog */}
+      <Dialog
+        open={openEditTaskDialog}
+        onClose={() => setOpenEditTaskDialog(false)}
+      >
+        <DialogTitle>Edit Task</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            label="Task Title"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            sx={{ my: 2 }}
+          />
+          <TextField
+            fullWidth
+            type="datetime-local"
+            value={newDueDate}
+            onChange={(e) => setNewDueDate(e.target.value)}
+            sx={{ my: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Additional Details (Optional)"
+            value={newDetails}
+            onChange={(e) => setNewDetails(e.target.value)}
+            sx={{ my: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEditTaskDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={editTask} color="primary">
+            Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Task Details Dialog */}
       <Dialog open={!!taskDetails} onClose={() => setTaskDetails(null)}>
         <DialogTitle>Task Details</DialogTitle>
         <DialogContent>
