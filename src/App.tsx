@@ -50,6 +50,7 @@ const Dashboard = () => {
   const [taskList, setTaskList] = useState(tasks);
   const [newTask, setNewTask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
+  const [newDetails, setNewDetails] = useState(""); // State for additional details
   const [taskDetails, setTaskDetails] = useState<{
     id: number;
     title: string;
@@ -82,11 +83,12 @@ const Dashboard = () => {
           title: newTask,
           status: "Pending",
           dueDate: newDueDate,
-          details: "No details available.",
+          details: newDetails || "No details for this task.", // Default if no details
         },
       ]);
       setNewTask("");
       setNewDueDate("");
+      setNewDetails(""); // Reset the details input
       setOpenAddTaskDialog(false); // Close dialog after adding task
     }
   };
@@ -181,19 +183,30 @@ const Dashboard = () => {
         </Box>
         <Box my={3}>
           <Typography variant="h6">Today's Tasks</Typography>
-          {taskList
-            .filter((task) => task.dueDate.startsWith(today))
-            .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
-            .map((task) => (
-              <Box key={task.id} p={2} bgcolor="yellow" borderRadius={2} my={1}>
-                <Typography>
-                  {task.title} ({new Date(task.dueDate).toLocaleTimeString()})
-                </Typography>
-                <Button size="small" onClick={() => setTaskDetails(task)}>
-                  Toggle Details
-                </Button>
-              </Box>
-            ))}
+          {taskList.filter((task) => task.dueDate.startsWith(today)).length ===
+          0 ? (
+            <Typography>No tasks left for today.</Typography> // Display this message if no tasks are due today
+          ) : (
+            taskList
+              .filter((task) => task.dueDate.startsWith(today))
+              .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
+              .map((task) => (
+                <Box
+                  key={task.id}
+                  p={2}
+                  bgcolor="yellow"
+                  borderRadius={2}
+                  my={1}
+                >
+                  <Typography>
+                    {task.title} ({new Date(task.dueDate).toLocaleTimeString()})
+                  </Typography>
+                  <Button size="small" onClick={() => setTaskDetails(task)}>
+                    Toggle Details
+                  </Button>
+                </Box>
+              ))
+          )}
         </Box>
       </Box>
 
@@ -250,6 +263,13 @@ const Dashboard = () => {
             type="datetime-local"
             value={newDueDate}
             onChange={(e) => setNewDueDate(e.target.value)}
+            sx={{ my: 2 }}
+          />
+          <TextField
+            fullWidth
+            label="Additional Details (Optional)"
+            value={newDetails}
+            onChange={(e) => setNewDetails(e.target.value)}
             sx={{ my: 2 }}
           />
         </DialogContent>
