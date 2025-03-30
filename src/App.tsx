@@ -189,18 +189,6 @@ const Dashboard = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{ my: 2 }}
           />
-          <Typography
-            variant="h6"
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            My Tasks
-            <IconButton
-              onClick={() => setOpenAddTaskDialog(true)}
-              sx={{ ml: 2 }}
-            >
-              <Add />
-            </IconButton>
-          </Typography>
         </Box>
 
         <Box
@@ -267,72 +255,82 @@ const Dashboard = () => {
             borderRadius: 2,
             padding: 3,
             backgroundColor: "#fff",
-
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            flexGrow: 1,
-            overflow: "hidden",
-            maxHeight: 300,
-
             mb: 3,
           }}
         >
-          <List>
-            {filteredTasks.map((task) => (
-              <ListItem
-                key={task.id}
-                secondaryAction={
-                  <>
-                    <IconButton
-                      edge="end"
-                      aria-label="info"
-                      onClick={() => setTaskDetails(task)}
-                    >
-                      <Info />
-                    </IconButton>
-                    <IconButton
-                      edge="end"
-                      aria-label="edit"
-                      onClick={() => openEditDialog(task)}
-                    >
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => removeTask(task.id)}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </>
-                }
-              >
-                <Checkbox
-                  checked={task.status === "Completed"}
-                  onChange={() =>
-                    setTaskList(
-                      taskList.map((t) =>
-                        t.id === task.id
-                          ? {
-                              ...t,
-                              status:
-                                t.status === "Completed"
-                                  ? "Pending"
-                                  : "Completed",
-                            }
-                          : t
-                      )
-                    )
+          <Typography
+            variant="h6"
+            sx={{ display: "flex", alignItems: "center" }}
+          >
+            My Tasks
+            <IconButton
+              onClick={() => setOpenAddTaskDialog(true)}
+              sx={{ ml: 2 }}
+            >
+              <Add />
+            </IconButton>
+          </Typography>
+
+          {/* Filtered Tasks */}
+          {filteredTasks.length === 0 ? (
+            <Typography color="textSecondary">There are no tasks</Typography>
+          ) : (
+            <List>
+              {filteredTasks.map((task) => (
+                <ListItem
+                  key={task.id}
+                  secondaryAction={
+                    <>
+                      <IconButton
+                        edge="end"
+                        aria-label="info"
+                        onClick={() => setTaskDetails(task)}
+                      >
+                        <Info />
+                      </IconButton>
+                      <IconButton
+                        edge="end"
+                        aria-label="edit"
+                        onClick={() => openEditDialog(task)}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        edge="end"
+                        aria-label="delete"
+                        onClick={() => removeTask(task.id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </>
                   }
-                />
-                <ListItemText
-                  primary={task.title}
-                  secondary={`Due: ${task.dueDate}`}
-                />
-              </ListItem>
-            ))}
-          </List>
+                >
+                  <Checkbox
+                    checked={task.status === "Completed"}
+                    onChange={() =>
+                      setTaskList(
+                        taskList.map((t) =>
+                          t.id === task.id
+                            ? {
+                                ...t,
+                                status:
+                                  t.status === "Completed"
+                                    ? "Pending"
+                                    : "Completed",
+                              }
+                            : t
+                        )
+                      )
+                    }
+                  />
+                  <ListItemText
+                    primary={task.title}
+                    secondary={`Due: ${task.dueDate}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
         </Box>
 
         <Box
