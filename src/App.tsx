@@ -200,18 +200,27 @@ const Dashboard = () => {
   }));
 
   return (
-    <Box display="flex" p={3}>
+    <Box
+      display="flex"
+      p={3}
+      sx={{
+        backgroundColor: "#999", // Light gray background for the entire app
+        minHeight: "100vh", // Ensure the background covers the full viewport height
+      }}
+    >
       <Box flex={2} mr={2}>
         <Box
           sx={{
             boxShadow: 3,
             borderRadius: 2,
             padding: 3,
-            backgroundColor: "#fff",
+            backgroundColor: "#fff", // White background for content boxes
             mb: 3,
           }}
         >
-          <Typography variant="h4">Dashboard</Typography>
+          <Typography variant="h4" sx={{ color: "#333" }}>
+            Dashboard
+          </Typography>
           <TextField
             fullWidth
             placeholder="Search task..."
@@ -226,7 +235,7 @@ const Dashboard = () => {
             boxShadow: 3,
             borderRadius: 2,
             padding: 3,
-            backgroundColor: "#fff",
+            backgroundColor: "#fff", // White background for content boxes
             mb: 3,
           }}
         >
@@ -255,7 +264,7 @@ const Dashboard = () => {
             boxShadow: 3,
             borderRadius: 2,
             padding: 3,
-            backgroundColor: "#fff",
+            backgroundColor: "#fff", // White background for content boxes
             mb: 3,
           }}
         >
@@ -284,13 +293,17 @@ const Dashboard = () => {
             boxShadow: 3,
             borderRadius: 2,
             padding: 3,
-            backgroundColor: "#fff",
+            backgroundColor: "#fff", // White background for content boxes
             mb: 3,
           }}
         >
           <Typography
             variant="h6"
-            sx={{ display: "flex", alignItems: "center" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              color: "#333", // Ensure text is visible
+            }}
           >
             My Tasks
             <IconButton
@@ -343,6 +356,7 @@ const Dashboard = () => {
                         : "#d4edda",
                     mb: 1,
                     borderRadius: 1,
+                    color: "#333", // Ensure text is visible
                   }}
                 >
                   <Checkbox
@@ -378,6 +392,7 @@ const Dashboard = () => {
                     sx={{
                       textDecoration:
                         task.status === "Completed" ? "line-through" : "none",
+                      color: "#333", // Ensure text is visible
                     }}
                   />
                 </ListItem>
@@ -391,11 +406,11 @@ const Dashboard = () => {
             boxShadow: 3,
             borderRadius: 2,
             padding: 3,
-            backgroundColor: "#121212",
+            backgroundColor: "#fff", // White background for content boxes
             mb: 3,
           }}
         >
-          <Typography variant="h6" sx={{ mb: 2, color: "#fff" }}>
+          <Typography variant="h6" sx={{ mb: 2, color: "#333" }}>
             Today's Tasks
           </Typography>
           {taskList.filter((task) => task.dueDate.startsWith(today)).length ===
@@ -445,11 +460,17 @@ const Dashboard = () => {
             boxShadow: 3,
             borderRadius: 2,
             padding: 3,
-            backgroundColor: "#fff",
+            backgroundColor: "#fff", // White background for content boxes
             mb: 3,
           }}
         >
-          <Typography variant="h6" sx={{ mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 2,
+              color: "#333", // Ensure text is visible
+            }}
+          >
             Tasks Added Per Day
           </Typography>
           <ResponsiveContainer width="100%" height={200}>
@@ -476,11 +497,17 @@ const Dashboard = () => {
           boxShadow: 3,
           borderRadius: 2,
           padding: 3,
-          backgroundColor: "#fff",
+          backgroundColor: "#fff", // White background for content boxes
           mb: 3,
         }}
       >
-        <Typography variant="h5" sx={{ mb: 2 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            mb: 2,
+            color: "#333", // Ensure text is visible
+          }}
+        >
           Calendar
         </Typography>
 
