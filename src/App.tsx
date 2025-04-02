@@ -427,7 +427,12 @@ const Dashboard = () => {
                   key={task.id}
                   sx={{
                     p: 2,
-                    bgcolor: "#e0f7fa",
+                    bgcolor:
+                      task.priority === "High"
+                        ? "#ffcccc" // Light red for high priority
+                        : task.priority === "Medium"
+                        ? "#fff3cd" // Light yellow for medium priority
+                        : "#d4edda", // Light green for low priority
                     borderRadius: 1,
                     mb: 1,
                     display: "flex",
@@ -437,7 +442,9 @@ const Dashboard = () => {
                   }}
                 >
                   <Typography variant="body1" sx={{ color: "#333" }}>
+                    {task.status === "Completed" ? "✔ " : ""}
                     {task.title} ({new Date(task.dueDate).toLocaleTimeString()})
+                    {task.status === "Completed" ? " - Completed" : ""}
                   </Typography>
                   <IconButton
                     onClick={() => setTaskDetails(task)}
