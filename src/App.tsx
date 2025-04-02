@@ -124,6 +124,19 @@ const Dashboard = () => {
     }
   };
 
+  const markTaskAsDone = (id: number) => {
+    setTaskList(
+      taskList.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              status: task.status === "Completed" ? "Pending" : "Completed",
+            }
+          : task
+      )
+    );
+  };
+
   interface Task {
     id: number;
     title: string;
@@ -446,18 +459,33 @@ const Dashboard = () => {
                     {task.title} ({new Date(task.dueDate).toLocaleTimeString()})
                     {task.status === "Completed" ? " - Completed" : ""}
                   </Typography>
-                  <IconButton
-                    onClick={() => setTaskDetails(task)}
-                    sx={{
-                      backgroundColor: "#2196f3",
-                      color: "#fff",
-                      "&:hover": {
-                        backgroundColor: "#1976d2",
-                      },
-                    }}
-                  >
-                    <ChevronRight />
-                  </IconButton>
+                  <Box>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color={
+                        task.status === "Completed" ? "secondary" : "primary"
+                      }
+                      onClick={() => markTaskAsDone(task.id)}
+                      sx={{ mr: 1 }}
+                    >
+                      {task.status === "Completed"
+                        ? "Mark Pending"
+                        : "Mark Done"}
+                    </Button>
+                    <IconButton
+                      onClick={() => setTaskDetails(task)}
+                      sx={{
+                        backgroundColor: "#2196f3",
+                        color: "#fff",
+                        "&:hover": {
+                          backgroundColor: "#1976d2",
+                        },
+                      }}
+                    >
+                      <ChevronRight />
+                    </IconButton>
+                  </Box>
                 </Box>
               ))
           )}
@@ -534,13 +562,21 @@ const Dashboard = () => {
                 ? "#ffeb3b" // Bright yellow for medium priority
                 : "#4caf50", // Green for low priority
             textColor: "#fff",
-            extendedProps: { details: task.details, priority: task.priority },
+            extendedProps: {
+              id: task.id,
+              details: task.details,
+              priority: task.priority,
+              status: task.status,
+            },
           }))}
           eventClick={(info) =>
             setTaskDetails({
-              ...info.event.extendedProps,
+              id: info.event.extendedProps.id,
               title: info.event.title,
               dueDate: info.event.start?.toISOString() || "",
+              details: info.event.extendedProps.details,
+              priority: info.event.extendedProps.priority,
+              status: info.event.extendedProps.status,
             } as Task)
           }
         />
@@ -673,6 +709,17 @@ const Dashboard = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
+          <Button
+            onClick={() => {
+              if (taskDetails) markTaskAsDone(taskDetails.id);
+              setTaskDetails(null);
+            }}
+            color={
+              taskDetails?.status === "Completed" ? "secondary" : "primary"
+            }
+          >
+            {taskDetails?.status === "Completed" ? "Mark Pending" : "Mark Done"}
+          </Button>
           <Button onClick={() => setTaskDetails(null)} color="primary">
             Close
           </Button>
