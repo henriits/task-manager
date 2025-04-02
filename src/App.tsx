@@ -37,6 +37,7 @@ const Dashboard = () => {
   const [newTask, setNewTask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
   const [newDetails, setNewDetails] = useState("");
+  const [newPriority, setNewPriority] = useState("Medium");
   const [taskDetails, setTaskDetails] = useState<Task | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("Today");
@@ -112,11 +113,13 @@ const Dashboard = () => {
         status: "Pending",
         dueDate: newDueDate,
         details: newDetails || "No details for this task.",
+        priority: newPriority,
       };
       setTaskList([...taskList, newTaskObj]);
       setNewTask("");
       setNewDueDate("");
       setNewDetails("");
+      setNewPriority("Medium");
       setOpenAddTaskDialog(false);
     }
   };
@@ -127,6 +130,7 @@ const Dashboard = () => {
     status: string;
     dueDate: string;
     details: string;
+    priority: string;
   }
 
   const removeTask = (id: number): void => {
@@ -142,6 +146,7 @@ const Dashboard = () => {
     title: string;
     dueDate: string;
     details: string;
+    priority: string;
   }
 
   const openEditDialog = (task: EditTask): void => {
@@ -149,6 +154,7 @@ const Dashboard = () => {
     setNewTask(task.title);
     setNewDueDate(task.dueDate);
     setNewDetails(task.details);
+    setNewPriority(task.priority || "Medium");
     setOpenEditTaskDialog(true);
   };
 
@@ -161,6 +167,7 @@ const Dashboard = () => {
               title: newTask,
               dueDate: newDueDate,
               details: newDetails,
+              priority: newPriority,
             }
           : task
       )
@@ -170,6 +177,7 @@ const Dashboard = () => {
     setNewTask("");
     setNewDueDate("");
     setNewDetails("");
+    setNewPriority("Medium");
   };
 
   const taskAdditionData = taskList.reduce(
@@ -326,6 +334,16 @@ const Dashboard = () => {
                       </IconButton>
                     </>
                   }
+                  sx={{
+                    backgroundColor:
+                      task.priority === "High"
+                        ? "#ffcccc"
+                        : task.priority === "Medium"
+                        ? "#fff3cd"
+                        : "#d4edda",
+                    mb: 1,
+                    borderRadius: 1,
+                  }}
                 >
                   <Checkbox
                     checked={task.status === "Completed"}
@@ -356,7 +374,7 @@ const Dashboard = () => {
                         hour: "2-digit",
                         minute: "2-digit",
                       }
-                    )}`}
+                    )} | Priority: ${task.priority}`}
                     sx={{
                       textDecoration:
                         task.status === "Completed" ? "line-through" : "none",
@@ -471,15 +489,25 @@ const Dashboard = () => {
           initialView="timeGridWeek"
           height="auto"
           events={taskList.map((task) => ({
-            title: `${task.status === "Completed" ? "✔ " : ""}${task.title}`,
-            date: task.dueDate,
+            title: `${task.status === "Completed" ? "✔ " : ""}${task.title} (${
+              task.priority
+            })`,
+            start: task.dueDate,
             backgroundColor:
-              task.status === "Completed" ? "#4caf50" : "#2196f3",
+              task.priority === "High"
+                ? "#ff5252" // Bright red for high priority
+                : task.priority === "Medium"
+                ? "#ffeb3b" // Bright yellow for medium priority
+                : "#4caf50", // Green for low priority
             textColor: "#fff",
-            extendedProps: { details: task.details },
+            extendedProps: { details: task.details, priority: task.priority },
           }))}
           eventClick={(info) =>
-            setTaskDetails(info.event.extendedProps as Task)
+            setTaskDetails({
+              ...info.event.extendedProps,
+              title: info.event.title,
+              dueDate: info.event.start?.toISOString() || "",
+            } as Task)
           }
         />
       </Box>
@@ -511,6 +539,16 @@ const Dashboard = () => {
             onChange={(e) => setNewDetails(e.target.value)}
             sx={{ my: 2 }}
           />
+          <Select
+            fullWidth
+            value={newPriority}
+            onChange={(e) => setNewPriority(e.target.value)}
+            sx={{ my: 2 }}
+          >
+            <MenuItem value="High">High</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="Low">Low</MenuItem>
+          </Select>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAddTaskDialog(false)} color="secondary">
@@ -549,6 +587,16 @@ const Dashboard = () => {
             onChange={(e) => setNewDetails(e.target.value)}
             sx={{ my: 2 }}
           />
+          <Select
+            fullWidth
+            value={newPriority}
+            onChange={(e) => setNewPriority(e.target.value)}
+            sx={{ my: 2 }}
+          >
+            <MenuItem value="High">High</MenuItem>
+            <MenuItem value="Medium">Medium</MenuItem>
+            <MenuItem value="Low">Low</MenuItem>
+          </Select>
         </DialogContent>
         <DialogActions>
           <Button
@@ -575,6 +623,19 @@ const Dashboard = () => {
           </Typography>
           <Typography variant="body2">
             <strong>Details:</strong> {taskDetails?.details}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color:
+                taskDetails?.priority === "High"
+                  ? "#ff5252" // Bright red for high priority
+                  : taskDetails?.priority === "Medium"
+                  ? "#ffeb3b" // Bright yellow for medium priority
+                  : "#4caf50", // Green for low priority
+            }}
+          >
+            <strong>Priority:</strong> {taskDetails?.priority}
           </Typography>
         </DialogContent>
         <DialogActions>
