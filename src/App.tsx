@@ -47,6 +47,31 @@ const Dashboard = () => {
 
   const today = new Date().toISOString().split("T")[0];
 
+  const todayTasks = taskList.filter((task) => task.dueDate.startsWith(today));
+  const todayProgress =
+    todayTasks.length > 0
+      ? (todayTasks.filter((t) => t.status === "Completed").length /
+          todayTasks.length) *
+        100
+      : 0;
+
+  const startOfWeek = new Date();
+  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  const endOfWeek = new Date();
+  endOfWeek.setDate(endOfWeek.getDate() + (6 - endOfWeek.getDay()));
+  const startOfWeekDate = startOfWeek.toISOString().split("T")[0];
+  const endOfWeekDate = endOfWeek.toISOString().split("T")[0];
+
+  const thisWeekTasks = taskList.filter(
+    (task) => task.dueDate >= startOfWeekDate && task.dueDate <= endOfWeekDate
+  );
+  const thisWeekProgress =
+    thisWeekTasks.length > 0
+      ? (thisWeekTasks.filter((t) => t.status === "Completed").length /
+          thisWeekTasks.length) *
+        100
+      : 0;
+
   // Load tasks from local storage on component mount
   useEffect(() => {
     const savedTasks = localStorage.getItem("tasks");
@@ -282,7 +307,7 @@ const Dashboard = () => {
           }}
         >
           <Typography variant="body2" color="textSecondary">
-            Progress:{" "}
+            Overall Progress:{" "}
             {(
               (taskList.filter((t) => t.status === "Completed").length /
                 taskList.length) *
@@ -297,6 +322,22 @@ const Dashboard = () => {
                 taskList.length) *
               100
             }
+            sx={{ width: "100%", height: 10, borderRadius: 5, mb: 2 }}
+          />
+          <Typography variant="body2" color="textSecondary">
+            Today's Progress: {todayProgress.toFixed(0)}%
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={todayProgress}
+            sx={{ width: "100%", height: 10, borderRadius: 5, mb: 2 }}
+          />
+          <Typography variant="body2" color="textSecondary">
+            This Week's Progress: {thisWeekProgress.toFixed(0)}%
+          </Typography>
+          <LinearProgress
+            variant="determinate"
+            value={thisWeekProgress}
             sx={{ width: "100%", height: 10, borderRadius: 5 }}
           />
         </Box>
