@@ -44,6 +44,9 @@ const TaskCalendar = ({ tasks, onViewDetails }: TaskCalendarProps) => {
           status: info.event.extendedProps.status,
         } as Task)
       }
+      eventContent={(eventInfo) => (
+        <div style={{ cursor: "pointer" }}>{eventInfo.event.title}</div> // Added cursor style
+      )}
     />
   );
 };

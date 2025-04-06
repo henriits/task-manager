@@ -60,10 +60,10 @@ const EditTaskDialog = ({
         </Select>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={onClose} color="secondary" sx={{ cursor: "pointer" }}>
           Cancel
         </Button>
-        <Button onClick={onEditTask} color="primary">
+        <Button onClick={onEditTask} color="primary" sx={{ cursor: "pointer" }}>
           Save Changes
         </Button>
       </DialogActions>

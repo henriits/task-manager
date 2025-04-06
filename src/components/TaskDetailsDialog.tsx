@@ -49,10 +49,11 @@ const TaskDetailsDialog = ({
             onClose();
           }}
           color={task.status === "Completed" ? "secondary" : "primary"}
+          sx={{ cursor: "pointer" }} // Added cursor style
         >
           {task.status === "Completed" ? "Mark Pending" : "Mark Done"}
         </Button>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="primary" sx={{ cursor: "pointer" }}>
           Close
         </Button>
       </DialogActions>

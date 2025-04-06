@@ -60,10 +60,10 @@ const AddTaskDialog = ({
         </Select>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="secondary">
+        <Button onClick={onClose} color="secondary" sx={{ cursor: "pointer" }}>
           Cancel
         </Button>
-        <Button onClick={onAddTask} color="primary">
+        <Button onClick={onAddTask} color="primary" sx={{ cursor: "pointer" }}>
           Add Task
         </Button>
       </DialogActions>

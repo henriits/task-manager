@@ -243,6 +243,7 @@ const Dashboard = () => {
           onRemoveTask={removeTask}
           onMarkTaskAsDone={toggleTaskStatus}
           onViewDetails={setTaskDetails}
+          sx={{ cursor: "pointer" }} // Added cursor style
         />
 
         <TasksPerDayChart data={chartData} />

@@ -37,7 +37,7 @@ const TaskList = ({
         }}
       >
         My Tasks
-        <IconButton onClick={onAddTask} sx={{ ml: 2 }}>
+        <IconButton onClick={onAddTask} sx={{ ml: 2, cursor: "pointer" }}>
           <Add />
         </IconButton>
       </Typography>
@@ -55,6 +55,7 @@ const TaskList = ({
                     edge="end"
                     aria-label="info"
                     onClick={() => onViewDetails(task)}
+                    sx={{ cursor: "pointer" }} // Added cursor style
                   >
                     <Info />
                   </IconButton>
@@ -62,6 +63,7 @@ const TaskList = ({
                     edge="end"
                     aria-label="edit"
                     onClick={() => onEditTask(task)}
+                    sx={{ cursor: "pointer" }} // Added cursor style
                   >
                     <Edit />
                   </IconButton>
@@ -69,6 +71,7 @@ const TaskList = ({
                     edge="end"
                     aria-label="delete"
                     onClick={() => onRemoveTask(task.id)}
+                    sx={{ cursor: "pointer" }} // Added cursor style
                   >
                     <Delete />
                   </IconButton>
@@ -89,6 +92,7 @@ const TaskList = ({
               <Checkbox
                 checked={task.status === "Completed"}
                 onChange={() => onMarkTaskAsDone(task.id)}
+                sx={{ cursor: "pointer" }} // Added cursor style
               />
               <ListItemText
                 primary={task.title}
