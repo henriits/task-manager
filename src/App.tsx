@@ -237,6 +237,13 @@ const Dashboard = () => {
     count: taskAdditionData[date],
   }));
 
+  const overallProgress =
+    taskList.length > 0
+      ? (taskList.filter((t) => t.status === "Completed").length /
+          taskList.length) *
+        100
+      : 0;
+
   return (
     <Box
       display="flex"
@@ -307,21 +314,11 @@ const Dashboard = () => {
           }}
         >
           <Typography variant="body2" color="textSecondary">
-            Overall Progress:{" "}
-            {(
-              (taskList.filter((t) => t.status === "Completed").length /
-                taskList.length) *
-              100
-            ).toFixed(0)}
-            %
+            Overall Progress: {overallProgress.toFixed(0)}%
           </Typography>
           <LinearProgress
             variant="determinate"
-            value={
-              (taskList.filter((t) => t.status === "Completed").length /
-                taskList.length) *
-              100
-            }
+            value={overallProgress}
             sx={{ width: "100%", height: 10, borderRadius: 5, mb: 2 }}
           />
           <Typography variant="body2" color="textSecondary">
