@@ -13,6 +13,7 @@ export interface EditTask {
   dueDate: string;
   details: string;
   priority: string;
+  status: string; // Added status property
 }
 
 export interface ChartData {

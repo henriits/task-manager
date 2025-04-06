@@ -7,10 +7,19 @@ import EditTaskDialog from "./EditTaskDialog";
 import TaskDetailsDialog from "./TaskDetailsDialog";
 import TaskCalendar from "./TaskCalendar";
 import TasksPerDayChart from "./TasksPerDayChart";
-import { Task, EditTask } from "../types/TaskTypes"; // Updated import
+import { Task, EditTask } from "../types/TaskTypes";
+import { useTaskStore } from "../store/taskStore"; // Import the zustand store
 
 const Dashboard = () => {
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const {
+    taskList,
+    setTaskList,
+    addTask,
+    updateTask,
+    removeTask,
+    toggleTaskStatus,
+  } = useTaskStore(); // Access the store
+
   const [newTask, setNewTask] = useState("");
   const [newDueDate, setNewDueDate] = useState("");
   const [newDetails, setNewDetails] = useState("");
@@ -55,7 +64,7 @@ const Dashboard = () => {
     if (savedTasks) {
       setTaskList(JSON.parse(savedTasks));
     }
-  }, []);
+  }, [setTaskList]);
 
   // Save tasks to local storage whenever taskList changes
   useEffect(() => {
@@ -79,6 +88,12 @@ const Dashboard = () => {
         return task.dueDate.startsWith(tomorrow.toISOString().split("T")[0]);
       }
       if (filter === "Due This Week") {
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        const endOfWeek = new Date();
+        endOfWeek.setDate(endOfWeek.getDate() + (6 - endOfWeek.getDay()));
+        const startOfWeekDate = startOfWeek.toISOString().split("T")[0];
+        const endOfWeekDate = endOfWeek.toISOString().split("T")[0];
         return task.dueDate >= startOfWeekDate && task.dueDate <= endOfWeekDate;
       }
       return true;
@@ -87,17 +102,17 @@ const Dashboard = () => {
       task.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-  const addTask = () => {
+  const handleAddTask = () => {
     if (newTask && newDueDate) {
       const newTaskObj: Task = {
         id: Date.now(),
         title: newTask,
-        status: "Pending",
+        status: "Pending", // Ensure status is included
         dueDate: newDueDate,
         details: newDetails || "No details for this task.",
         priority: newPriority,
       };
-      setTaskList([...taskList, newTaskObj]);
+      addTask(newTaskObj);
       setNewTask("");
       setNewDueDate("");
       setNewDetails("");
@@ -106,53 +121,23 @@ const Dashboard = () => {
     }
   };
 
-  const markTaskAsDone = (id: number) => {
-    setTaskList(
-      taskList.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              status: task.status === "Completed" ? "Pending" : "Completed",
-            }
-          : task
-      )
-    );
-  };
-
-  const removeTask = (id: number): void => {
-    const updatedTaskList = taskList.filter((task: Task) => task.id !== id);
-    setTaskList(updatedTaskList);
-  };
-
-  const openEditDialog = (task: EditTask): void => {
-    setEditingTask(task);
-    setNewTask(task.title);
-    setNewDueDate(task.dueDate);
-    setNewDetails(task.details);
-    setNewPriority(task.priority || "Medium");
-    setOpenEditTaskDialog(true);
-  };
-
-  const editTask = () => {
-    setTaskList(
-      taskList.map((task) =>
-        editingTask && task.id === editingTask.id
-          ? {
-              ...task,
-              title: newTask,
-              dueDate: newDueDate,
-              details: newDetails,
-              priority: newPriority,
-            }
-          : task
-      )
-    );
-    setOpenEditTaskDialog(false);
-    setEditingTask(null);
-    setNewTask("");
-    setNewDueDate("");
-    setNewDetails("");
-    setNewPriority("Medium");
+  const handleEditTask = () => {
+    if (editingTask && newTask && newDueDate) {
+      updateTask({
+        ...editingTask,
+        title: newTask,
+        dueDate: newDueDate,
+        details: newDetails || "No details for this task.",
+        priority: newPriority,
+        status: editingTask.status, // Ensure status is preserved
+      });
+      setOpenEditTaskDialog(false);
+      setEditingTask(null);
+      setNewTask("");
+      setNewDueDate("");
+      setNewDetails("");
+      setNewPriority("Medium");
+    }
   };
 
   const taskAdditionData = taskList.reduce(
@@ -240,9 +225,23 @@ const Dashboard = () => {
         <TaskList
           tasks={filteredTasks}
           onAddTask={() => setOpenAddTaskDialog(true)}
-          onEditTask={openEditDialog} // Use the openEditDialog function here
+          onEditTask={(task) => {
+            setEditingTask({
+              id: task.id,
+              title: task.title,
+              dueDate: task.dueDate,
+              details: task.details,
+              priority: task.priority,
+              status: task.status, // Include status when setting editingTask
+            });
+            setNewTask(task.title);
+            setNewDueDate(task.dueDate);
+            setNewDetails(task.details);
+            setNewPriority(task.priority || "Medium");
+            setOpenEditTaskDialog(true);
+          }}
           onRemoveTask={removeTask}
-          onMarkTaskAsDone={markTaskAsDone}
+          onMarkTaskAsDone={toggleTaskStatus}
           onViewDetails={setTaskDetails}
         />
 
@@ -265,7 +264,7 @@ const Dashboard = () => {
       <AddTaskDialog
         open={openAddTaskDialog}
         onClose={() => setOpenAddTaskDialog(false)}
-        onAddTask={addTask}
+        onAddTask={handleAddTask}
         newTask={newTask}
         setNewTask={setNewTask}
         newDueDate={newDueDate}
@@ -279,7 +278,7 @@ const Dashboard = () => {
       <EditTaskDialog
         open={openEditTaskDialog}
         onClose={() => setOpenEditTaskDialog(false)}
-        onEditTask={editTask}
+        onEditTask={handleEditTask}
         newTask={newTask}
         setNewTask={setNewTask}
         newDueDate={newDueDate}
@@ -293,7 +292,7 @@ const Dashboard = () => {
       <TaskDetailsDialog
         task={taskDetails}
         onClose={() => setTaskDetails(null)}
-        onMarkTaskAsDone={markTaskAsDone}
+        onMarkTaskAsDone={toggleTaskStatus}
       />
     </Box>
   );
