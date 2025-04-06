@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Box, TextField, Typography, Select, MenuItem } from "@mui/material";
 import ProgressBars from "./ProgressBars";
 import TaskList from "./TaskList";
@@ -38,8 +38,6 @@ const Dashboard = () => {
   const [openAddTaskDialog, setOpenAddTaskDialog] = useState(false);
   const [openEditTaskDialog, setOpenEditTaskDialog] = useState(false);
   const [editingTask, setEditingTask] = useState<EditTask | null>(null);
-
-  const isInitialLoad = useRef(true); // Track whether the initial load is complete
 
   const today = new Date().toISOString().split("T")[0];
 
