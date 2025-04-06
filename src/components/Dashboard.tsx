@@ -198,7 +198,29 @@ const Dashboard = () => {
             sx={{ my: 2 }}
           />
         </Box>
-
+        <TaskList
+          tasks={filteredTasks}
+          onAddTask={() => setOpenAddTaskDialog(true)}
+          onEditTask={(task) => {
+            setEditingTask({
+              id: task.id,
+              title: task.title,
+              dueDate: task.dueDate,
+              details: task.details,
+              priority: task.priority,
+              status: task.status, // Include status when setting editingTask
+            });
+            setNewTask(task.title);
+            setNewDueDate(task.dueDate);
+            setNewDetails(task.details);
+            setNewPriority(task.priority || "Medium");
+            setOpenEditTaskDialog(true);
+          }}
+          onRemoveTask={removeTask}
+          onMarkTaskAsDone={toggleTaskStatus}
+          onViewDetails={setTaskDetails}
+          sx={{ cursor: "pointer" }} // Added cursor style
+        />
         <Box
           sx={{
             boxShadow: 3,
@@ -230,30 +252,6 @@ const Dashboard = () => {
           overallProgress={overallProgress}
           todayProgress={todayProgress}
           thisWeekProgress={thisWeekProgress}
-        />
-
-        <TaskList
-          tasks={filteredTasks}
-          onAddTask={() => setOpenAddTaskDialog(true)}
-          onEditTask={(task) => {
-            setEditingTask({
-              id: task.id,
-              title: task.title,
-              dueDate: task.dueDate,
-              details: task.details,
-              priority: task.priority,
-              status: task.status, // Include status when setting editingTask
-            });
-            setNewTask(task.title);
-            setNewDueDate(task.dueDate);
-            setNewDetails(task.details);
-            setNewPriority(task.priority || "Medium");
-            setOpenEditTaskDialog(true);
-          }}
-          onRemoveTask={removeTask}
-          onMarkTaskAsDone={toggleTaskStatus}
-          onViewDetails={setTaskDetails}
-          sx={{ cursor: "pointer" }} // Added cursor style
         />
 
         <TasksPerDayChart data={chartData} />
