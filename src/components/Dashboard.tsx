@@ -51,9 +51,12 @@ const Dashboard = () => {
       : 0;
 
   const startOfWeek = new Date();
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+  startOfWeek.setDate(
+    startOfWeek.getDate() -
+      (startOfWeek.getDay() === 0 ? 6 : startOfWeek.getDay() - 1)
+  ); // Adjust to Monday
   const endOfWeek = new Date();
-  endOfWeek.setDate(endOfWeek.getDate() + (6 - endOfWeek.getDay()));
+  endOfWeek.setDate(startOfWeek.getDate() + 6); // Ensure Sunday is included
   const startOfWeekDate = startOfWeek.toISOString().split("T")[0];
   const endOfWeekDate = endOfWeek.toISOString().split("T")[0];
 
