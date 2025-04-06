@@ -403,11 +403,11 @@ const Dashboard = () => {
                       task.priority === "High"
                         ? "#ffcccc"
                         : task.priority === "Medium"
-                        ? "#fff3cd"
+                        ? "#ffe5b4" // Light orange for medium priority
                         : "#d4edda",
                     mb: 1,
                     borderRadius: 1,
-                    color: "#333", // Ensure text is visible
+                    color: task.priority === "Medium" ? "#000" : "#333", // Black text for orange background
                   }}
                 >
                   <Checkbox
@@ -482,7 +482,7 @@ const Dashboard = () => {
                       task.priority === "High"
                         ? "#ffcccc" // Light red for high priority
                         : task.priority === "Medium"
-                        ? "#fff3cd" // Light yellow for medium priority
+                        ? "#ffe5b4" // Light orange for medium priority
                         : "#d4edda", // Light green for low priority
                     borderRadius: 1,
                     mb: 1,
@@ -588,6 +588,7 @@ const Dashboard = () => {
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView="timeGridWeek"
           height="auto"
+          firstDay={1} // Start the week from Monday
           events={taskList.map((task) => ({
             title: `${task.status === "Completed" ? "✔ " : ""}${task.title} (${
               task.priority
@@ -597,9 +598,9 @@ const Dashboard = () => {
               task.priority === "High"
                 ? "#ff5252" // Bright red for high priority
                 : task.priority === "Medium"
-                ? "#ffeb3b" // Bright yellow for medium priority
+                ? "#ffa500" // Bright orange for medium priority
                 : "#4caf50", // Green for low priority
-            textColor: "#fff",
+            textColor: task.priority === "Medium" ? "#000" : "#fff", // Black text for orange background
             extendedProps: {
               id: task.id,
               details: task.details,
@@ -739,7 +740,7 @@ const Dashboard = () => {
                 taskDetails?.priority === "High"
                   ? "#ff5252" // Bright red for high priority
                   : taskDetails?.priority === "Medium"
-                  ? "#ffeb3b" // Bright yellow for medium priority
+                  ? "#ffa500" // Bright orange for medium priority
                   : "#4caf50", // Green for low priority
             }}
           >
