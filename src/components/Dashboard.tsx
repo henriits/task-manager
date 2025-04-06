@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { Box, TextField, Typography, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Typography,
+  Select,
+  MenuItem,
+  useMediaQuery,
+} from "@mui/material";
 import ProgressBars from "./ProgressBars";
 import TaskList from "./TaskList";
 import AddTaskDialog from "./AddTaskDialog";
@@ -11,6 +18,8 @@ import { Task, EditTask } from "../types/TaskTypes";
 import { useTaskStore } from "../store/taskStore"; // Import the zustand store
 
 const Dashboard = () => {
+  const isMobile = useMediaQuery("(max-width: 600px)"); // Check if the screen size is mobile
+
   const {
     taskList,
     setTaskList,
@@ -164,10 +173,11 @@ const Dashboard = () => {
   return (
     <Box
       display="flex"
+      flexDirection={isMobile ? "column" : "row"} // Stack components vertically on mobile
       p={3}
       sx={{ backgroundColor: "#999", minHeight: "100vh" }}
     >
-      <Box flex={2} mr={2}>
+      <Box flex={2} mr={isMobile ? 0 : 2} mb={isMobile ? 2 : 0}>
         <Box
           sx={{
             boxShadow: 3,
@@ -256,7 +266,7 @@ const Dashboard = () => {
           borderRadius: 2,
           padding: 3,
           backgroundColor: "#fff",
-          mb: 3,
+          mb: isMobile ? 2 : 0, // Add margin on mobile
         }}
       >
         <TaskCalendar tasks={taskList} onViewDetails={setTaskDetails} />

@@ -1,3 +1,5 @@
+import { SxProps } from "@mui/material"; // Import SxProps for styling
+
 export interface Task {
   id: number;
   title: string;
@@ -57,6 +59,7 @@ export interface TaskListProps {
   onRemoveTask: (id: number) => void;
   onMarkTaskAsDone: (id: number) => void;
   onViewDetails: (task: Task) => void;
+  sx?: SxProps; // Added optional sx property
 }
 
 export interface AddTaskDialogProps {
