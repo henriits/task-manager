@@ -6,21 +6,7 @@ import {
   Typography,
   Button,
 } from "@mui/material";
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-  details: string;
-  priority: string;
-}
-
-interface TaskDetailsDialogProps {
-  task: Task | null;
-  onClose: () => void;
-  onMarkTaskAsDone: (id: number) => void;
-}
+import { TaskDetailsDialogProps } from "../types/TaskTypes"; // Updated import
 
 const TaskDetailsDialog = ({
   task,

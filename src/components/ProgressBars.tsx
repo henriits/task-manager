@@ -1,10 +1,5 @@
 import { Box, Typography, LinearProgress } from "@mui/material";
-
-interface ProgressBarsProps {
-  overallProgress: number;
-  todayProgress: number;
-  thisWeekProgress: number;
-}
+import { ProgressBarsProps } from "../types/TaskTypes"; // Updated import
 
 const ProgressBars = ({
   overallProgress,

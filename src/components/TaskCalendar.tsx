@@ -1,15 +1,7 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-  details: string;
-  priority: string;
-}
+import { Task } from "../types/TaskTypes"; // Updated import
 
 interface TaskCalendarProps {
   tasks: Task[];

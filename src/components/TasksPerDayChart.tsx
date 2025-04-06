@@ -9,15 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Box, Typography } from "@mui/material";
-
-interface ChartData {
-  name: string;
-  count: number;
-}
-
-interface TasksPerDayChartProps {
-  data: ChartData[];
-}
+import { TasksPerDayChartProps } from "../types/TaskTypes"; // Updated import
 
 const TasksPerDayChart = ({ data }: TasksPerDayChartProps) => {
   return (

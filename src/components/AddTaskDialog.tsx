@@ -8,20 +8,7 @@ import {
   MenuItem,
   Button,
 } from "@mui/material";
-
-interface AddTaskDialogProps {
-  open: boolean;
-  onClose: () => void;
-  onAddTask: () => void;
-  newTask: string;
-  setNewTask: (value: string) => void;
-  newDueDate: string;
-  setNewDueDate: (value: string) => void;
-  newDetails: string;
-  setNewDetails: (value: string) => void;
-  newPriority: string;
-  setNewPriority: (value: string) => void;
-}
+import { AddTaskDialogProps } from "../types/TaskTypes"; // Updated import
 
 const AddTaskDialog = ({
   open,

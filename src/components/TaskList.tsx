@@ -8,24 +8,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import { Add, Info, Edit, Delete } from "@mui/icons-material";
-
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-  details: string;
-  priority: string;
-}
-
-interface TaskListProps {
-  tasks: Task[];
-  onAddTask: () => void;
-  onEditTask: (task: Task) => void;
-  onRemoveTask: (id: number) => void;
-  onMarkTaskAsDone: (id: number) => void;
-  onViewDetails: (task: Task) => void;
-}
+import { TaskListProps } from "../types/TaskTypes"; // Updated import
 
 const TaskList = ({
   tasks,

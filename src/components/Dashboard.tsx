@@ -7,24 +7,7 @@ import EditTaskDialog from "./EditTaskDialog";
 import TaskDetailsDialog from "./TaskDetailsDialog";
 import TaskCalendar from "./TaskCalendar";
 import TasksPerDayChart from "./TasksPerDayChart";
-
-// Define Task and EditTask interfaces
-interface Task {
-  id: number;
-  title: string;
-  status: string;
-  dueDate: string;
-  details: string;
-  priority: string;
-}
-
-interface EditTask {
-  id: number;
-  title: string;
-  dueDate: string;
-  details: string;
-  priority: string;
-}
+import { Task, EditTask } from "../types/TaskTypes"; // Updated import
 
 const Dashboard = () => {
   const [taskList, setTaskList] = useState<Task[]>([]);
