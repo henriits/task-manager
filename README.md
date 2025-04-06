@@ -97,16 +97,6 @@ yarn build
 
 The build output will be in the `dist/` directory.
 
-## Screenshots
-
-### Dashboard
-
-![Dashboard Screenshot](https://via.placeholder.com/800x400?text=Dashboard+Screenshot)
-
-### Calendar View
-
-![Calendar Screenshot](https://via.placeholder.com/800x400?text=Calendar+Screenshot)
-
 ## Future Enhancements
 
 - Add user authentication.
