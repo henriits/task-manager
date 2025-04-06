@@ -73,12 +73,14 @@ const TaskCalendar = ({ tasks, onViewDetails }: TaskCalendarProps) => {
           })`,
           start: task.dueDate, // Ensure the task's due date includes the time
           backgroundColor:
-            task.priority === "High"
-              ? "#ff5252"
+            task.status === "Completed"
+              ? "#4caf50" // Green for completed tasks
+              : task.priority === "High"
+              ? "#ff5252" // Red for high priority
               : task.priority === "Medium"
-              ? "#ffa500"
-              : "#4caf50",
-          textColor: task.priority === "Medium" ? "#000" : "#fff",
+              ? "#ffa500" // Orange for medium priority
+              : "#2196f3", // Blue for low priority
+          textColor: "#fff", // Ensure text is readable
           extendedProps: {
             id: task.id,
             details: task.details,
@@ -96,9 +98,22 @@ const TaskCalendar = ({ tasks, onViewDetails }: TaskCalendarProps) => {
             status: info.event.extendedProps.status,
           } as Task)
         }
-        eventContent={(eventInfo) => (
-          <div style={{ cursor: "pointer" }}>{eventInfo.event.title}</div>
-        )}
+        eventContent={(eventInfo) => {
+          const { backgroundColor, textColor, title } = eventInfo.event;
+          return (
+            <div
+              style={{
+                cursor: "pointer",
+                backgroundColor: backgroundColor || "transparent", // Apply background color
+                color: textColor || "#000", // Apply text color
+                padding: "2px 4px",
+                borderRadius: "4px",
+              }}
+            >
+              {title}
+            </div>
+          );
+        }}
       />
     </Box>
   );
