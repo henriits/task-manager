@@ -2,6 +2,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { Task } from "../types/TaskTypes"; // Updated import
+import { useMediaQuery } from "@mui/material"; // Import useMediaQuery for responsiveness
 
 interface TaskCalendarProps {
   tasks: Task[];
@@ -9,12 +10,19 @@ interface TaskCalendarProps {
 }
 
 const TaskCalendar = ({ tasks, onViewDetails }: TaskCalendarProps) => {
+  const isMobile = useMediaQuery("(max-width: 600px)"); // Check if the screen size is mobile
+
   return (
     <FullCalendar
       plugins={[dayGridPlugin, timeGridPlugin]}
-      initialView="timeGridWeek"
+      initialView={isMobile ? "dayGridDay" : "timeGridWeek"} // Use a simpler view for mobile
       height="auto"
       firstDay={1} // Start the week from Monday
+      headerToolbar={{
+        left: "prev,next today",
+        center: "title",
+        right: isMobile ? "" : "dayGridMonth,timeGridWeek,timeGridDay", // Simplify header for mobile
+      }}
       events={tasks.map((task) => ({
         title: `${task.status === "Completed" ? "✔ " : ""}${task.title} (${
           task.priority
